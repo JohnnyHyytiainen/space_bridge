@@ -1,0 +1,19 @@
+
+### .gitignore
+gitignore
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Data/artefakter
+data/*.csv
+data/*.json
+data/*_big*.jsonl
+
+# Loggar
+*.log
+
+# Jupyter/övrigt
+.ipynb_checkpoints/

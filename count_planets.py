@@ -1,25 +1,36 @@
 import json  # importerar json modulen i python för att jag ska kunna skriva/hämta data ur .json filer
 import csv  # se ovan. Importerar csv modulen i python för att jag ska kunna skriva/hämta data ur .csv filer
-import operator  # importerar operator modulen i python för att jag ska kunna använda funktioner som t.ex key=operator.itemgetter
-# import operator används för sortering.
 import time  # importerar time modulen i python för att jag ska kolla benchmark tider
 
+INPUT = "data/space_logs.jsonl"
+OUTPUT = "data/planet_counts.csv"
 counts = {}
 rows = 0
+skipped_blank = 0  # räknare för tom rad / tomt planetvärde
+skipped_missing = 0  # saknar 'planet' nyckeln
+
 
 # sätter en timer i början -INNAN- for looparna för att mäta hur lång tid for looparna under tar.
-t0 = time.perf_counter()
 # time.perf_counter står för time(säger sig självt) perf_counter(performance_counter) tid.prestanda_räknare.
+t0 = time.perf_counter()
 # för jsonl filen. .jsonl = en json per rad.
 # encoding="utf-8" säkerhet för att få med åäö
-with open("data/space_logs.jsonl", "r", encoding="utf-8") as f:
+with open(INPUT, "r", encoding="utf-8") as f:
     for line in f:
-        if not line.strip():
+        if not line.strip():  # tar bort whitespace till höger och vänster. "tvättar datan"
+            skipped_blank += 1
             continue
 
+        # obj = json.load string -> gör om JSON-texten till en Python-dict. line är en textsträng (en rad från filen)
         obj = json.loads(line)
+        # om 'planet' inte(not) i(in) obj: så +1 pga skipped_missing += 1.
+        if "planet" not in obj:
+            # lägger till +1 i skipped_missing = 0 variabeln längre upp i programmet.
+            skipped_missing += 1
+            continue
+        # planet = string obj.hämta("planet", "").strip. 'tvättar datan' se ovan om strip().
         planet = str(obj.get("planet", "")).strip()
-        # skydd mot saknad/felaktig data
+        # skipped_blank += 1  <--- med denna så ger den skipped_blank = 12 varje gång.
         if not planet:
             continue
 
@@ -28,6 +39,12 @@ with open("data/space_logs.jsonl", "r", encoding="utf-8") as f:
         else:
             counts[planet] = 1
         rows += 1
+
+
+# valid_rows = rows (giltiga_rader = rader variabeln högt upp)
+valid_rows = rows
+print(f"valid={valid_rows} skipped_blank={skipped_blank} skipped_missing={skipped_missing}")
+# printa giltiga_rader=rows. skippade_blanka=skipped_blank. skippade_saknade=skipped_missing
 
 # asserts/sanity check för att underlätta debugging om filen är tom, tomma/blanka rader/alla rader är tomma.
 # assert rows > 0 garanterar mig att MINST en giltig rad processas.
@@ -47,16 +64,12 @@ print(f"tid_ms: {dt_ms:.2f}")
 # bättre att mäta logikens prestanda(parse+ aggregering). Mäta den totala tiden för skriptet kan vara en feature jag lägger till senare.
 
 # --- skriv planet_counts.csv ---
-with open("data/planet_counts.csv", "w", newline="", encoding="utf-8") as out:
+with open(OUTPUT, "w", newline="", encoding="utf-8") as out:
     w = csv.writer(out)
     w.writerow(["planet", "count"])        # header.
-    # key=operator.itemgetter(1) = sortera på element nr 2 i tuplen (count)
-    # reverse=True ger störst först.
-    # rader.
-    for planet, count in sorted(counts.items(), key=operator.itemgetter(1), reverse=True):
-        w.writerow([planet, count])
+    # bytt .itemgetter till lambda istället.
+    for planet, count in sorted(counts.items(), key=lambda kv: kv[1], reverse=True):
+        w.writerow([planet, counts])
 
-
-print("rader:", rows)
-for k, v in counts.items():
-    print(k, v)
+for planet, count in sorted(counts.items(), key=lambda kv: kv[1], reverse=True):
+    print(f"{planet},{count}")

@@ -4,7 +4,7 @@ Filtrerar “outer”-planeter (avstånd ≥ 1.5 AU), konverterar AU till miljon
 kategoriserar inner/outer och visualiserar som stapeldiagram. Byggd för att
 öva långform till comprehensions, dict-aggregation och enkel plotting.
 """
-
+# NOTE: C1 pipeline lives in count_planets.py (pipeline_run). This file left as-is from CC1.
 
 # Mini projekt för att brygga över de dagar jag ej förstod vissa koncept samt övning med dagens tema som är matplotlib.
 # AU = Astronomical Unit - avståndet mellan jorden till solen = 1 AU

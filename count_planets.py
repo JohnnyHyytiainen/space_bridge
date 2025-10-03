@@ -37,7 +37,7 @@ def pipeline_run(input_path: str = INPUT, output_path: str = OUTPUT):
                 continue
 
             # hämta och normalisera planet (bara strip i C1)
-            planet = str(obj.get("planet", "")).strip()
+            planet = str(obj.get("planet", "")).strip().lower()
             if not planet:
                 skipped_blank += 1
                 continue

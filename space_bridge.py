@@ -164,11 +164,11 @@ if __name__ == "__main__":
     # plott
     positions = range(len(values))
     plt.figure()
-    plt.bar(positions, values)
+    plt.bar(positions, values, color="#fc5628i")
     plt.xticks(positions, labels)
     plt.title("Planeters avstånd från solen (miljoner km)")
     plt.xlabel("Planeter")
     plt.ylabel("Miljoner km")
     plt.tight_layout()
     plt.savefig("space_bridge.png")
-    # plt.show()
+    plt.show()

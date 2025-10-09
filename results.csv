@@ -5,3 +5,6 @@
     2025-09-29,C1,count_planets.py,20,5,0.14,true,Zero++,N
     2025-09-30,C1,count_planets.py,20,4,0.51,true,Zero++,N
     2025-10-03,C1,count_planets.py,30,3,0.43,true,Zero++,Y
+    2025-10-09,C2,test_enrich_counts.py,45,3,0.34,true,RookieAdvanced,Y
+    2025-10-09,C2,run.py,30,1,0.22,true,RookieAdvanced,Y
+    2025-10-09,C2,count_planets.py,30,2,0.17,true,RookieAdvanced,Y

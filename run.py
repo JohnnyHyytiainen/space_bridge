@@ -12,7 +12,9 @@ if __name__ == "__main__":
         output_path="data/planet_counts.csv",
     )
 
-    print("DONE:",
-          res["rows"], "rows,",
-          f"{res['ms']:.2f} ms,",
-          "unique_planets=", len(res["counts"]))
+    print("Done:",
+          res["rows"], "rows |",
+          f"A={res['read_ms']:.2f} B={res['sort_ms']:.2f} "
+          f"C={res['write_ms']:.2f} D={res['verify_ms']:.2f} "
+          f"E={res['e_ms']:.2f} | "
+          f"T={res['total_ms']:.2f} ms")

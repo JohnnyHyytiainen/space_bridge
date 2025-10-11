@@ -1,19 +1,35 @@
-
-### .gitignore
-gitignore
 # Python
 __pycache__/
-*.pyc
+*.py[cod]
 .venv/
 .env
+.pytest_cache/
+*.egg-info/
 
-# Data/artefakter
-data/*.csv
-data/*.json
+# OS-junk
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Bilder från äldre övningar
+space_bridge.png
+
+# Data: ignorera allt...
+data/*
+
+# ...men behåll dessa artefakter och sample-input
+!data/space_logs.jsonl
+!data/planet_counts.csv
+!data/planet_counts.json
+!data/counts_enriched.csv
+
+# Ignorera stora/syntetiska datasets och temporära filer
+data/*_100k*.jsonl
 data/*_big*.jsonl
+data/tmp_*.*
 
 # Loggar
 *.log
 
-# Jupyter/övrigt
-.ipynb_checkpoints/

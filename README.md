@@ -13,6 +13,7 @@ Träna kärnkompetenser för Data Engineering: strömmad läsning (JSONL), dicti
 - **Safe increment:** `counts[p] = counts.get(p, 0) + 1`.
 - **Paritetstest:** läs tillbaka CSV → matcha antal, summa och ordning.
 - **Mätning:** per steg i millisekunder (A–E) + total 
+- **Exempel output i terminal efter run.py:** Done: 12 rows | A=0.34 B=0.01 C=0.88 D=2.35 E=0.97 | T=4.58 ms
 
 
 ## Cykel 2 – (C2) Enrichment (rookie-advanced)
@@ -31,7 +32,6 @@ Läser `data/planet_counts.json` och skriver `data/counts_enriched.csv` med kolu
 python -c "from counts_enrich import run; print(run())"
 python test_enrich_counts.py   # ska skriva: Okej
 ```
-
 
 * Pipeline (A–E)
 - Timing: A=read+count, B=sort, C=write CSV, D=verify parity, E=write JSON, T=total. T ≈ A+B+C+D+E (± overhead). Alla asserts måste vara gröna innan JSON skrivs.

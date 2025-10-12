@@ -17,10 +17,11 @@ Träna kärnkompetenser i Data Engineering: strömmad läsning (JSONL), robust n
 
 
 ## Cykel 1 (C1) - Counting
-- En publik funktion: `pipeline_run(input_path, output_path)`.
-- Komplexitet: O(n) tid, O(U) minne (U≈8 planeter)
-- Mätning: per steg i millisekunder (A–E) + total 
-- Exempelutskrift: Done: 12 rows | A=0.34 B=0.01 C=0.88 D=2.35 E=0.97 | T=4.58 ms
+- **Publik funktion:** `pipeline_run(input_path, output_path)`
+- **Komplexitet:** O(n) tid, O(U) minne (U≈8 planeter)
+- **Mätning:** per steg i millisekunder (A–E) + total
+- **Exempelutskrift:**
+  - Done: 12 rows | A=0.34 B=0.01 C=0.88 D=2.35 E=0.97 | T=4.58 ms
 
 
 ## Cykel 2 (C2) - Enrichment 

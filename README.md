@@ -34,9 +34,15 @@ planet,count,share (share med 6 decimaler), sorterad fallande på count.
 - icke-tilltagande count rad-för-rad
 
 
-## Köra C2:
+## Köra Cykel 2 (C2):
 - python -c "`from counts_enrich import run; print(run())`"
 - python `test_enrich_counts.py`
+
+## Cykel 3 (C3) - Performance (syntetisk/synthetic)
+- Dataset: `space_logs_100k.jsonl`(seed=42)
+- Exempel (cold): rows = 99,378 | A=126.41 B=0.00 C=0.40 D=19.25 E=2.04 | T=148.15ms | 670,781.8 rows/s
+- Exempel (warm): rows = 99,378 | A=124.91 B=0.01 C=0.42 D=2.66 E=0.25 | T=128.28ms | 774,721.3 rows/s
+- Notering: Cold vs warm cache. D dominerar ofta små filer; A/C växer linjärt med rader.
 
 
 ## Artefakter 

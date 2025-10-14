@@ -29,6 +29,9 @@ data/*
 data/*_100k*.jsonl
 data/*_big*.jsonl
 data/tmp_*.*
+data/planet_counts_space_logs_100k.csv
+data/planet_counts_space_logs_100k.json
+data/planet_counts_bench.csv
 
 # Loggar
 *.log

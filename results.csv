@@ -14,3 +14,5 @@
     2025-10-12,C2,README.MD,20,1,4.58,true,RookieAdvanced,Y
     2025-10-12,C2,run.py,40,2,5.93,true,RookieAdvanced,Y
     2025-10-12,C2,runs.csv,20,1,6.01,true,RookieAdvanced,Y
+    2025-10-14,C3,gen_space_logs.py,40,4,128.28,true,RookieAdvanced,Y
+    2025-10-14,C3,bench_100k.py,40,3,128.28,true,RookieAdvanced,Y

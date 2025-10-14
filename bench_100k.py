@@ -10,6 +10,26 @@ from pathlib import Path
 import csv
 import time
 from count_planets import pipeline_run
+import json
+
+
+# privat existerar ej i python men --> _ <-- append indikerar att jag ej ska röra denna/rör denna funktion på egen risk
+# _ innan namnet indikerar att den är "privat" och bör ej användas direkt
+def _write_counts_snapshot(inp: str, counts: dict[str, int]) -> None:
+    """Skriv planet_counts_{stem}.{csv,json} utan att röra C1-filerna."""
+    stem = Path(inp).stem  # t.ex. "space_logs_100k"
+    items = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+
+    # CSV-snapshot
+    with open(f"data/planet_counts_{stem}.csv", "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["planet", "count"])
+        for k, v in items:
+            w.writerow([k, v])
+
+    # JSON-snapshot
+    with open(f"data/planet_counts_{stem}.json", "w", encoding="utf-8") as jf:
+        json.dump(dict(items), jf, ensure_ascii=False, indent=2)
 
 
 # privat existerar ej i python men --> _ <-- append indikerar att jag ej ska röra denna/rör denna funktion på egen risk
@@ -35,7 +55,7 @@ def _append_bench_row(path="runs_bench.csv", res=None, dataset=""):
         ])
 
 
-def bench(inp="data/space_logs_100k.jsonl", outp="data/planet_counts.csv"):
+def bench(inp="data/space_logs_100k.jsonl", outp="data/planet_counts_bench.csv"):
     t0 = perf_counter()
     res = pipeline_run(inp, outp)
     # total inkluderar A–E redan i res['total_ms'], men vi tar om hela för säkerhets skull:
@@ -50,6 +70,7 @@ def bench(inp="data/space_logs_100k.jsonl", outp="data/planet_counts.csv"):
     )
 
     _append_bench_row(res=res, dataset=Path(inp).name)
+    _write_counts_snapshot(inp, res["counts"])
     return res
 
 

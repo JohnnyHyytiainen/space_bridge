@@ -17,3 +17,4 @@
     2025-10-14,C3,gen_space_logs.py,40,4,128.28,true,RookieAdvanced,Y
     2025-10-14,C3,bench_100k.py,40,3,128.28,true,RookieAdvanced,Y
     2025-10-15,C3,run.py,35,1,5.51,true,RookieAdvanced,Y
+    2025-10-17,C3,bench_100k.py,45,3,99.35,true,RookieAdvanced,Y

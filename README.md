@@ -61,6 +61,15 @@ python cli.py enrich --in data/planet_counts.json    --out data/counts_enriched.
 --top visar topp-N rader (default 3)
 --top 0 visar inga rader.
 ```
+# Versionsinfo
+```bash
+python cli.py --version
+0 = OK
+2 = input saknas
+3 = assert-fel(datavalidering)
+4 = oväntat fel
+```
+
 
 
 
@@ -71,7 +80,7 @@ python cli.py enrich --in data/planet_counts.json    --out data/counts_enriched.
 - data/counts_enriched.csv — planet,count,share (C2)
 - runs.csv — automatisk körlogg: timestamp, rows, A–E, T, skips, unique, top (C2+)
 - results.csv — manuell dagbok (datum, cykel, pomodoros, mode, compliance)
-- space_bridge.png — enkel visual från tidigare övning
+- space_bridge.png — enkel visual från tidigare projekt
 
 
 ## Snabbstart

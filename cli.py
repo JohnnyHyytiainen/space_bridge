@@ -13,6 +13,17 @@ from counts_enrich import run as enrich_run
 
 
 def cmd_count(args) -> int:
+    if not Path(args.inp).exists():
+        print(f"Input not found: {args.inp}")
+        return 2
+    try:
+        res = pipeline_run(args.inp, args.outp)
+    except AssertionError as e:
+        print(f"Assert failed in count: {e}")
+        return 3
+    except Exception as e:
+        print(f"Unexpected error in count: {e}")
+        return 4
     res = pipeline_run(args.inp, args.outp)
     print(
         "COUNT:",
@@ -34,6 +45,9 @@ def _read_enriched(path: str) -> list[tuple[str, int, float]]:
     with open(path, "r", encoding="utf-8", newline="") as f:
         r = csv.reader(f)
         header = next(r, None)
+        if header != ["planet", "count", "share"]:
+            print(f"Warning: unexpected header in {path}: {header}")
+            return []
         for p, c, s in r:
             rows.append((p, int(c), float(s)))
     return rows
@@ -43,13 +57,23 @@ def _read_enriched(path: str) -> list[tuple[str, int, float]]:
 
 
 def cmd_enrich(args) -> int:
+    if not Path(args.inp).exists():
+        print(f"Input not found: {args.inp}")
+        return 2
+    try:
+        res = enrich_run(args.inp, args.outp)
+    except AssertionError as e:
+        print(f"Assert failed in enrich: {e}")
+        return 3
+    except Exception as e:
+        print(f"Unexpected error in enrich: {e}")
+        return 4
     res = enrich_run(args.inp, args.outp)
     print(f"ENRICH: rows={res['rows']} total={res['total']}")
     # Visa topp N från enriched (planet, count, share)
 
     rows = _read_enriched(args.outp)
     top_n = max(0, args.top)  # tillåter 0
-
     print(f"Top {top_n}:")
     if top_n == 0:
         print("  (no rows)")
@@ -68,6 +92,11 @@ def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="space-bridge",
         description="Mini-ETL tools (rookie-advanced CLI)"
+    )
+    p.add_argument(
+        "--version",
+        action="version",
+        version="Space Bridge 0.4.0 (C4)"
     )
     sub = p.add_subparsers(dest="cmd", required=True)
 

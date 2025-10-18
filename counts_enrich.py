@@ -26,7 +26,7 @@ def run(inp: str = "data/planet_counts.json",
         w = csv.writer(g)
         w.writerow(["planet", "count", "share"])
         for p, c, s in rows:
-            w.writerow([p, c, f"{s:.5f}"])  # 6st decimaler för stabil diff?
+            w.writerow([p, c, f"{s:.6f}"])  # 6st decimaler för stabil diff
 
     # --- D: Asserts för direkt feedback om något står galet till ---
     assert len(rows) == len(counts)  # antal rader ska vara samma

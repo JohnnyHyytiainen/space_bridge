@@ -19,7 +19,7 @@ from count_planets import pipeline_run
 def _write_counts_snapshot(inp: str, counts: dict[str, int]) -> None:
     """Skriv planet_counts_{stem}.{csv,json} utan att röra C1-filerna."""
     stem = Path(inp).stem  # t.ex. "space_logs_100k"
-    items = sorted(counts.items(), key=lambda kv: kv[1], reverse=True)
+    items = sorted(counts.items(), key=lambda kv: (-kv[1], kv[0]))
 
     # CSV-snapshot
     with open(f"data/planet_counts_{stem}.csv", "w", newline="", encoding="utf-8") as f:

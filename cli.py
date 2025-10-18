@@ -25,7 +25,6 @@ def cmd_count(args) -> int:
     except Exception as e:
         print(f"Unexpected error in count: {e}")
         return 4
-    res = pipeline_run(args.inp, args.outp)
     print(
         "COUNT:",
         f"rows={res['rows']} | "
@@ -35,7 +34,7 @@ def cmd_count(args) -> int:
     )
     # snäll extra: visa filen som skrevs
     print(f"-> wrote: {Path(args.outp).as_posix()}")
-    return 0  # Varför return 0?
+    return 0
 
 #
 # B-cli
@@ -69,7 +68,6 @@ def cmd_enrich(args) -> int:
     except Exception as e:
         print(f"Unexpected error in enrich: {e}")
         return 4
-    res = enrich_run(args.inp, args.outp)
     print(f"ENRICH: rows={res['rows']} total={res['total']}")
     # Visa topp N från enriched (planet, count, share)
 

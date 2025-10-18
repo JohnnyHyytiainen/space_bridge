@@ -11,7 +11,7 @@ import json
 
 
 PLANETS = ["mercury", "venus", "earth", "mars",
-           "jupiter", "saturn", "saturn", "uranus", "neptune"]
+           "jupiter", "saturn", "uranus", "neptune"]
 
 
 def generate(path="data/space_logs_100k.jsonl", n=100_000,

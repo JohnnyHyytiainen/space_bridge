@@ -64,6 +64,32 @@ def build_parser() -> argparse.ArgumentParser:
         description="Mini-ETL tools (rookie-advanced CLI)"
     )
     sub = p.add_subparsers(dest="cmd", required=True)
-#########################################
-############# TO DO : ###################
-###### C1: count # C2: enrich ###########
+
+    # C1: count
+    p_count = sub.add_parser(
+        "count", help="Read JSONL -> write planet_counts.csv/json")
+    p_count.add_argument("--in", dest="inp", default="data/space_logs.jsonl")
+    p_count.add_argument("--out", dest="outp",
+                         default="data/planet_counts.csv")
+    p_count.set_defaults(func=cmd_count)
+
+    # C2: enrich
+    p_en = sub.add_parser(
+        "enrich", help="Read planet_counts.json -> write counts_enriched.csv")
+    p_en.add_argument("--in", dest="inp", default="data/planet_counts.json")
+    p_en.add_argument("--out", dest="outp", default="data/counts_enriched.csv")
+    p_en.add_argument("--top", type=int, default=3,
+                      help="print top-N after writing (default 3)")
+    p_en.set_defaults(func=cmd_enrich)
+
+    return p
+
+
+def main(argv=None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

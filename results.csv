@@ -19,3 +19,6 @@
     2025-10-15,C3,run.py,35,1,5.51,true,RookieAdvanced,Y
     2025-10-17,C3,bench_100k.py,45,3,99.35,true,RookieAdvanced,Y
     2025-10-17,C4,cli.py,45,2,0.00,semi,RookieAdvanced,Y
+    2025-10-18,C4,run.py,5,1,5.46,true,RookieAdvanced,Y
+    2025-10-18,C4,tests_smoke.py,5,1,0.00,true,RookieAdvanced,Y
+    2025-10-18,C4,cli.py,35,1,0.00,true,RookieAdvanced,Y

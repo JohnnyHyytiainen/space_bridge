@@ -54,6 +54,14 @@ planet,count,share (share med 6 decimaler), sorterad fallande på count.
 - Warm: D (paritet) sjunker kraftigt p.g.a. OS-cache. A/C ~ linjära i rader; 10–15 % variation är normalt.
 
 
+## Cykel 4 (C4) – CLI (argparse)
+```bash
+python cli.py count  --in data/space_logs.jsonl      --out data/planet_counts.csv
+python cli.py enrich --in data/planet_counts.json    --out data/counts_enriched.csv --top 3
+```
+
+
+
 
 ## Artefakter 
 - data/planet_counts.csv — counts i stabil ordning (C1)

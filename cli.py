@@ -8,6 +8,7 @@ from count_planets import pipeline_run
 from counts_enrich import run as enrich_run
 # run(inp, outp) -> dict
 
+VERSION = "0.4.1 (C4)"
 #
 # A-cli
 
@@ -91,13 +92,15 @@ def cmd_enrich(args) -> int:
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
         prog="space-bridge",
-        description="Mini-ETL tools (rookie-advanced CLI)"
+        description="Mini-ETL tools (rookie-advanced CLI)",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
     p.add_argument(
         "--version",
         action="version",
-        version="Space Bridge 0.4.0 (C4)"
+        version=f"Space Bridge {VERSION}"
     )
+
     sub = p.add_subparsers(dest="cmd", required=True)
 
     # C1: count
@@ -121,9 +124,20 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv=None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-    return args.func(args)
+    try:
+        parser = build_parser()
+        args = parser.parse_args(argv)
+
+        # input guard
+        if hasattr(args, "inp") and args.inp and not Path(args.inp).exists():
+            print(f"Input not found:\n{args.inp}")
+            return 2
+
+        return args.func(args)  # 0 på success
+    except AssertionError:
+        return 3
+    except Exception:
+        return 4
 
 
 if __name__ == "__main__":

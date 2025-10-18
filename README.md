@@ -63,12 +63,17 @@ python cli.py enrich --in data/planet_counts.json    --out data/counts_enriched.
 ```
 # Versionsinfo
 ```bash
+På Windows PowerShell 5.1 använd ; echo $LASTEXITCODE för att läsa exit-kod
 python cli.py --version
 0 = OK
 2 = input saknas
 3 = assert-fel(datavalidering)
 4 = oväntat fel
 ```
+**PowerShell (Windows 5.1/7):**  
+`python cli.py count  --in data/missing.jsonl --out data/planet_counts.csv; echo $LASTEXITCODE`  
+**CMD:**  
+`python cli.py count --in data\missing.jsonl --out data\planet_counts.csv || echo %ERRORLEVEL%`  
 
 
 

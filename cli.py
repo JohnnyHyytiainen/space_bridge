@@ -46,11 +46,17 @@ def cmd_enrich(args) -> int:
     res = enrich_run(args.inp, args.outp)
     print(f"ENRICH: rows={res['rows']} total={res['total']}")
     # Visa topp N från enriched (planet, count, share)
-    top_n = max(1, args.top)
+
     rows = _read_enriched(args.outp)
+    top_n = max(0, args.top)  # tillåter 0
+
     print(f"Top {top_n}:")
-    for p, c, s in rows[:top_n]:
-        print(f"  {p:10s}  count={c:5d}  share={s:.6f}")
+    if top_n == 0:
+        print("  (no rows)")
+    else:
+        for p, c, s in rows[:top_n]:
+            print(f"  {p:10s}  count={c:5d}  share={s:.6f}")
+
     print(f"-> wrote: {Path(args.outp).as_posix()}")
     return 0
 

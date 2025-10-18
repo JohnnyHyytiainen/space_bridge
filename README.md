@@ -58,6 +58,8 @@ planet,count,share (share med 6 decimaler), sorterad fallande på count.
 ```bash
 python cli.py count  --in data/space_logs.jsonl      --out data/planet_counts.csv
 python cli.py enrich --in data/planet_counts.json    --out data/counts_enriched.csv --top 3
+--top visar topp-N rader (default 3)
+--top 0 visar inga rader.
 ```
 
 

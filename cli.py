@@ -14,17 +14,7 @@ VERSION = "0.4.1 (C4)"
 
 
 def cmd_count(args) -> int:
-    if not Path(args.inp).exists():
-        print(f"Input not found: {args.inp}")
-        return 2
-    try:
-        res = pipeline_run(args.inp, args.outp)
-    except AssertionError as e:
-        print(f"Assert failed in count: {e}")
-        return 3
-    except Exception as e:
-        print(f"Unexpected error in count: {e}")
-        return 4
+    res = pipeline_run(args.inp, args.outp)
     print(
         "COUNT:",
         f"rows={res['rows']} | "
@@ -57,20 +47,8 @@ def _read_enriched(path: str) -> list[tuple[str, int, float]]:
 
 
 def cmd_enrich(args) -> int:
-    if not Path(args.inp).exists():
-        print(f"Input not found: {args.inp}")
-        return 2
-    try:
-        res = enrich_run(args.inp, args.outp)
-    except AssertionError as e:
-        print(f"Assert failed in enrich: {e}")
-        return 3
-    except Exception as e:
-        print(f"Unexpected error in enrich: {e}")
-        return 4
+    res = enrich_run(args.inp, args.outp)
     print(f"ENRICH: rows={res['rows']} total={res['total']}")
-    # Visa topp N från enriched (planet, count, share)
-
     rows = _read_enriched(args.outp)
     top_n = max(0, args.top)  # tillåter 0
     print(f"Top {top_n}:")
@@ -79,7 +57,6 @@ def cmd_enrich(args) -> int:
     else:
         for p, c, s in rows[:top_n]:
             print(f"  {p:10s}  count={c:5d}  share={s:.6f}")
-
     print(f"-> wrote: {Path(args.outp).as_posix()}")
     return 0
 
@@ -104,16 +81,20 @@ def build_parser() -> argparse.ArgumentParser:
     # C1: count
     p_count = sub.add_parser(
         "count", help="Read JSONL -> write planet_counts.csv/json")
-    p_count.add_argument("--in", dest="inp", default="data/space_logs.jsonl")
-    p_count.add_argument("--out", dest="outp",
+
+    p_count.add_argument("--in", dest="inp", metavar="INP",
+                         default="data/space_logs.jsonl")
+    p_count.add_argument("--out", dest="outp", metavar="OUT",
                          default="data/planet_counts.csv")
     p_count.set_defaults(func=cmd_count)
 
     # C2: enrich
     p_en = sub.add_parser(
         "enrich", help="Read planet_counts.json -> write counts_enriched.csv")
-    p_en.add_argument("--in", dest="inp", default="data/planet_counts.json")
-    p_en.add_argument("--out", dest="outp", default="data/counts_enriched.csv")
+    p_en.add_argument("--in", dest="inp", metavar="INP",
+                      default="data/planet_counts.json")
+    p_en.add_argument("--out", dest="outp", metavar="OUT",
+                      default="data/counts_enriched.csv")
     p_en.add_argument("--top", type=int, default=3,
                       help="print top-N after writing (default 3)")
     p_en.set_defaults(func=cmd_enrich)
@@ -122,19 +103,21 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv=None) -> int:
+    parser = build_parser()
+    args = parser.parse_args(argv)
+
+    # input guard - görs CENTRALT här
+    if hasattr(args, "inp") and args.inp and not Path(args.inp).exists():
+        print(f"Input not found:\n{args.inp}", file=sys.stderr)
+        return 2
+
     try:
-        parser = build_parser()
-        args = parser.parse_args(argv)
-
-        # input guard
-        if hasattr(args, "inp") and args.inp and not Path(args.inp).exists():
-            print(f"Input not found:\n{args.inp}")
-            return 2
-
         return args.func(args)  # 0 på success
-    except AssertionError:
+    except AssertionError as e:
+        print(f"[assert failed] {e}", file=sys.stderr)
         return 3
-    except Exception:
+    except Exception as e:
+        print(f"[unexpected] {e}", file=sys.stderr)
         return 4
 
 

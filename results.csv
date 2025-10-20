@@ -1,4 +1,4 @@
-    date,cycle,script,focus_min,pomos,tid_ms,success,mode,compliance
+    date,cycle,script,focus_min,pomos,tid_ms,success,mode,compliance,notes
 
     2025-09-28,C1,count_planets.py,20,3,0.96,true,Zero++,N
     2025-09-28,C1,count_planets.py,20,4,0.28,true,Zero++,N
@@ -27,3 +27,4 @@
     2025-10-19,C4,cli.py,35,2,0.00,true,RookieAdvanced,Y
     2025-10-20,C5,sql_sink.py,55,3,0.00,true,RookieAdvanced,Y
     2025-10-20,C5,sql_sink.py,45,3,0.00,true,RookieAdvanced,Y
+    2025-10-20,C5,sql_sink.py,45,1,0,true,RookieAdvanced,Y,"db=data/space_bridge.db counts_rows=4 enriched_rows=4 share_sum=1.0 wal=on"

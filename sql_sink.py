@@ -12,11 +12,12 @@
 # laddar in: data/counts_enriched.csv -> counts_enriched (UPSERT per planet)
 
 # BLOCK 1
+import sql_sink
 import sqlite3  # Pythons inbyggda SQLite klient
 from pathlib import Path  # Filväg som är robust
 import json  # läsa in artefakt
 import csv  # läsa in artefakt
-from datetime import datetime  # datum/tid för "senast uppdaterad"
+from datetime import datetime, UTC  # datum/tid för "senast uppdaterad"
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS planet_counts (
@@ -65,7 +66,7 @@ def upsert_counts(conn: sqlite3.Connection, counts_json_path: str) -> int:
     with open(counts_json_path, "r", encoding="utf-8") as f:
         data = json.load(f)  # dict[planet]=count
 
-    now = datetime.utcnow().isoformat(timespec="seconds")
+    now = datetime.now(UTC).isoformat(timespec="seconds")
     cur = conn.cursor()
     n = 0
     for planet, cnt in data.items():
@@ -87,7 +88,7 @@ def upsert_counts(conn: sqlite3.Connection, counts_json_path: str) -> int:
 
 
 def upsert_enriched(conn: sqlite3.Connection, enriched_csv_path: str) -> int:
-    now = datetime.utcnow().isoformat(timespec="seconds")
+    now = datetime.now(UTC).isoformat(timespec="seconds")
     cur = conn.cursor()
     n = 0
     with open(enriched_csv_path, "r", encoding="utf-8", newline="") as f:

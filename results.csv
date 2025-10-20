@@ -25,4 +25,5 @@
     2025-10-18,C4,cli.py,35,2,0.00,true,RookieAdvanced,Y
     2025-10-18,C4,cli.py,30,1,0.00,true,RookieAdvanced,Y
     2025-10-19,C4,cli.py,35,2,0.00,true,RookieAdvanced,Y
-    2025-10-20,C4,sql_sink.py,55,3,0.00,true,RookieAdvanced,Y
+    2025-10-20,C5,sql_sink.py,55,3,0.00,true,RookieAdvanced,Y
+    2025-10-20,C5,sql_sink.py,45,3,0.00,true,RookieAdvanced,Y

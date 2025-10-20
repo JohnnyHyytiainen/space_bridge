@@ -58,6 +58,8 @@ def init_db(db_path: str, debug: bool = False) -> sqlite3.Connection:
         print("database_list:", dbs)
     return conn
 
+# BLOCK 3 upsert_counts
+
 
 def upsert_counts(conn: sqlite3.Connection, counts_json_path: str) -> int:
     with open(counts_json_path, "r", encoding="utf-8") as f:
@@ -81,8 +83,63 @@ def upsert_counts(conn: sqlite3.Connection, counts_json_path: str) -> int:
     conn.commit()
     return n
 
+# BLOCK 4 upsert_enriched CSV -> DB
+
+
+def upsert_enriched(conn: sqlite3.Connection, enriched_csv_path: str) -> int:
+    now = datetime.utcnow().isoformat(timespec="seconds")
+    cur = conn.cursor()
+    n = 0
+    with open(enriched_csv_path, "r", encoding="utf-8", newline="") as f:
+        r = csv.reader(f)
+        header = next(r, None)
+        assert header == ["planet", "count", "share"], f"bad header: {header}"
+        for planet, cnt, share in r:
+            cur.execute(
+                """
+                INSERT INTO counts_enriched(planet, count, share, updated_at)
+                VALUES(?, ?, ?, ?)
+                ON CONFLICT(planet) DO UPDATE SET
+                  count=excluded.count,
+                  share=excluded.share,
+                  updated_at=excluded.updated_at
+                """,
+                (planet, int(cnt), float(share), now),
+            )
+            n += 1
+    conn.commit()
+    return n
+
+# BLOCK 5: quick_checks
+
+
+def quick_checks(conn: sqlite3.Connection) -> dict:
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT planet, count FROM planet_counts ORDER BY count DESC LIMIT 3;")
+    top3 = cur.fetchall()
+    cur.execute("SELECT ROUND(SUM(share), 6) FROM counts_enriched;")
+    share_sum = cur.fetchone()[0] or 0.0
+    return {"top3": top3, "share_sum": float(share_sum)}
+
+# BLOCK 6: run() med mini QA-grind
+
+
+def run(db_path="data/space_bridge.db",
+        counts_json="data/planet_counts.json",
+        enriched_csv="data/counts_enriched.csv") -> dict:
+    conn = init_db(db_path)
+    try:
+        n1 = upsert_counts(conn, counts_json)
+        n2 = upsert_enriched(conn, enriched_csv)
+        qc = quick_checks(conn)
+    finally:
+        conn.close()
+
+    # mini-QA: Shares ska inte "spränga" 1.0, lite slack för float
+    assert qc["share_sum"] <= 1.000001, f"share_sum too high: {qc['share_sum']}"
+    return {"db": db_path, "counts_rows": n1, "enriched_rows": n2, **qc}
+
 
 if __name__ == "__main__":
-    c = sqlite3.connect("data/space_bridge.db")
-    print(c.execute("PRAGMA journal_mode;").fetchone())
-    c.close()
+    print(run())

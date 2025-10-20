@@ -18,6 +18,9 @@ space_bridge.png
 
 # Data: ignorera allt...
 data/*
+data/*.db
+data/*.db-wal
+data/*.db-shm
 
 # ...men behåll dessa artefakter och sample-input
 !data/space_logs.jsonl

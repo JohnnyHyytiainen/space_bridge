@@ -114,32 +114,50 @@ def upsert_enriched(conn: sqlite3.Connection, enriched_csv_path: str) -> int:
 # BLOCK 5: quick_checks
 
 
-def quick_checks(conn: sqlite3.Connection) -> dict:
+def quick_checks(conn: sqlite3.Connection, top: int = 3) -> dict:
     cur = conn.cursor()
     cur.execute(
-        "SELECT planet, count FROM planet_counts ORDER BY count DESC LIMIT 3;")
-    top3 = cur.fetchall()
+        "SELECT planet, count FROM planet_counts ORDER BY count DESC LIMIT ?;", (int(top),))
+    topn = cur.fetchall()
     cur.execute("SELECT ROUND(SUM(share), 6) FROM counts_enriched;")
     share_sum = cur.fetchone()[0] or 0.0
-    return {"top3": top3, "share_sum": float(share_sum)}
+    return {"top": topn, "share_sum": float(share_sum)}
 
 # BLOCK 6: run() med mini QA-grind
 
 
 def run(db_path="data/space_bridge.db",
         counts_json="data/planet_counts.json",
-        enriched_csv="data/counts_enriched.csv") -> dict:
+        enriched_csv="data/counts_enriched.csv",
+        top: int = 3,
+        max_share_sum: float = 1.000001) -> dict:
     conn = init_db(db_path)
     try:
         n1 = upsert_counts(conn, counts_json)
         n2 = upsert_enriched(conn, enriched_csv)
-        qc = quick_checks(conn)
+        qc = quick_checks(conn, top=top)
     finally:
         conn.close()
 
     # mini-QA: Shares ska inte "spränga" 1.0, lite slack för float
-    assert qc["share_sum"] <= 1.000001, f"share_sum too high: {qc['share_sum']}"
+    assert qc["share_sum"] <= max_share_sum, f"share_sum too high: {qc['share_sum']}"
     return {"db": db_path, "counts_rows": n1, "enriched_rows": n2, **qc}
+
+# Block 7: Wrapper
+
+
+def run_from_config(config_path="config.json") -> dict:
+    c = load_config(config_path)
+    return run(db_path=c["db"],
+               counts_json=c["counts_json"],
+               enriched_csv=c["enriched_csv"],
+               top=int(c.get("top", 3)),
+               max_share_sum=float(c.get("max_share_sum", 1.000001)))
+
+
+def load_config(path="config.json") -> dict:
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
 
 
 if __name__ == "__main__":

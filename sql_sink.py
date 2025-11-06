@@ -12,7 +12,6 @@
 # laddar in: data/counts_enriched.csv -> counts_enriched (UPSERT per planet)
 
 # BLOCK 1
-import sql_sink
 import sqlite3  # Pythons inbyggda SQLite klient
 from pathlib import Path  # Filväg som är robust
 import json  # läsa in artefakt
@@ -32,7 +31,7 @@ CREATE TABLE IF NOT EXISTS counts_enriched (
   updated_at TEXT NOT NULL
 );
 """
-# VIKTIGT: PRIMARY KEY på planet → varje planet max en rad.
+# VIKTIGT: PRIMARY KEY på planet -> varje planet max en rad.
 # Det gör UPSERT naturligt: om den finns, uppdatera; annars skapa.
 
 # BLOCK 2 init_db
@@ -114,7 +113,7 @@ def upsert_enriched(conn: sqlite3.Connection, enriched_csv_path: str) -> int:
 # BLOCK 5: quick_checks
 
 
-def quick_checks(conn: sqlite3.Connection, top: int = 3) -> dict:
+def quick_checks(conn: sqlite3.Connection, top: int = 3) -> dict[str, float | int | list[tuple[str, int]]]:
     cur = conn.cursor()
     cur.execute(
         "SELECT planet, count FROM planet_counts ORDER BY count DESC LIMIT ?;", (int(top),))
@@ -130,7 +129,7 @@ def run(db_path="data/space_bridge.db",
         counts_json="data/planet_counts.json",
         enriched_csv="data/counts_enriched.csv",
         top: int = 3,
-        max_share_sum: float = 1.000001) -> dict:
+        max_share_sum: float = 1.000001) -> dict[str, float | int | list[tuple[str, int]]]:
     conn = init_db(db_path)
     try:
         n1 = upsert_counts(conn, counts_json)

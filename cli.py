@@ -6,9 +6,10 @@ import csv
 from pathlib import Path
 from count_planets import pipeline_run
 from counts_enrich import run as enrich_run
+from sql_sink import run_from_config, export_from_config
 # run(inp, outp) -> dict
 
-VERSION = "0.4.1 (C4)"
+VERSION = "0.8.0 (C8)"
 #
 # A-cli
 
@@ -60,7 +61,35 @@ def cmd_enrich(args) -> int:
     print(f"-> wrote: {Path(args.outp).as_posix()}")
     return 0
 
-#
+#SQL-SINK handler funktion 
+# Dessa mappar returvärden till exit codes (0=OK, 3=QA-fail, 4=oväntat):
+
+def cmd_sql_load(args) -> int:
+    try:
+        res = run_from_config(args.config)
+        print("SQL-LOAD:", res)
+        return 0
+    except (AssertionError, ValueError) as e:
+        # AssertionError = massbalans; ValueError = validate() (C7)
+        print(f"[qa failed] {e}", file=sys.stderr)
+        return 3
+    except Exception as e:
+        print(f"[unexpected] {e}", file=sys.stderr)
+        return 4
+
+
+def cmd_sql_report(args) -> int:
+    try:
+        res = export_from_config(config_path=args.config, out_path=args.out)
+        print("SQL-REPORT:", res)
+        print(f"-> wrote: {Path(res['out']).as_posix()}")
+        return 0
+    except (AssertionError, ValueError) as e:
+        print(f"[qa failed] {e}", file=sys.stderr)
+        return 3
+    except Exception as e:
+        print(f"[unexpected] {e}", file=sys.stderr)
+        return 4
 # D-cli
 
 
@@ -98,6 +127,24 @@ def build_parser() -> argparse.ArgumentParser:
     p_en.add_argument("--top", type=int, default=3,
                       help="print top-N after writing (default 3)")
     p_en.set_defaults(func=cmd_enrich)
+
+    # C6–C8: sql-load (kör sink via config)
+    p_sql_load = sub.add_parser(
+        "sql-load",
+        help="Load artifacts into SQLite using config (run_from_config)"
+    )
+    p_sql_load.add_argument("--config", default="config.json")
+    p_sql_load.set_defaults(func=cmd_sql_load)
+
+    # C8: sql-report (exportera top-N rapport)
+    p_sql_rep = sub.add_parser(
+        "sql-report",
+        help="Export top-N report to CSV (export_from_config)"
+    )
+    p_sql_rep.add_argument("--config", default="config.json")
+    p_sql_rep.add_argument("--out", default="data/report_top.csv")
+    p_sql_rep.set_defaults(func=cmd_sql_report)
+
 
     return p
 

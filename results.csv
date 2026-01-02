@@ -34,3 +34,7 @@
     2026-01-02,C7,sql_sink.py,45,1,0.00,true,RookieAdvanced,Y
     2026-01-02,C7,sql_sink.py,45,2,0.00,true,RookieAdvanced,Y
     2026-01-02,C8,sql_sink.py,50,1,2,true,RookieAdvanced,Y,"report_top.csv rows=<3>"
+    2026-01-02,C8,cli.py,45,1,0,true,RookieAdvanced,Y,"Added function to run sql_sink.py with cli.py"
+    2026-01-02,C8,cli.py,35,1,0,true,RookieAdvanced,Y,"Troubleshooting mismatches. Preflight function added in sql_sink.py"
+
+    

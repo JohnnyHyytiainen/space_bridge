@@ -20,15 +20,16 @@ from datetime import datetime, UTC  # datum/tid för "senast uppdaterad"
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS planet_counts (
-  planet TEXT PRIMARY KEY,
-  count  INTEGER NOT NULL,
-  updated_at TEXT NOT NULL
+  planet     TEXT PRIMARY KEY CHECK(length(trim(planet)) > 0),
+  count      INTEGER NOT NULL CHECK(count >= 0),
+  updated_at TEXT   NOT NULL CHECK(length(updated_at) >= 10)
 );
 CREATE TABLE IF NOT EXISTS counts_enriched (
-  planet TEXT PRIMARY KEY,
-  count  INTEGER NOT NULL,
-  share  REAL NOT NULL,
-  updated_at TEXT NOT NULL
+  planet     TEXT PRIMARY KEY CHECK(length(trim(planet)) > 0),
+  count      INTEGER NOT NULL CHECK(count >= 0),
+  share      REAL    NOT NULL CHECK(share BETWEEN 0.0 AND 1.0),
+  updated_at TEXT    NOT NULL CHECK(length(updated_at) >=10)
+
 );
 """
 # VIKTIGT: PRIMARY KEY på planet -> varje planet max en rad.

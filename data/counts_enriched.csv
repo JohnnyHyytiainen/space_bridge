@@ -1,5 +1,9 @@
 planet,count,share
-mars,6,0.500000
-venus,3,0.250000
-jupiter,2,0.166667
-saturnus,1,0.083333
+neptune,12610,0.126873
+venus,12566,0.126430
+uranus,12470,0.125464
+earth,12452,0.125283
+jupiter,12404,0.124800
+saturn,12330,0.124055
+mars,12284,0.123593
+mercury,12275,0.123502

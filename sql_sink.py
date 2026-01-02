@@ -18,6 +18,26 @@ import json  # läsa in artefakt
 import csv  # läsa in artefakt
 from datetime import datetime, UTC  # datum/tid för "senast uppdaterad"
 
+#Preflight to prevent unwanted mismatches
+
+def preflight_inputs(counts_json: str, enriched_csv: str) -> None:
+    with open(counts_json, "r", encoding="utf-8") as f:
+        counts = json.load(f)  # dict[planet]=count
+    with open(enriched_csv, "r", encoding="utf-8", newline="") as f:
+        r = csv.reader(f)
+        header = next(r, None)
+        if header != ["planet", "count", "share"]:
+            raise ValueError(f"bad header in {enriched_csv}: {header}")
+        planets_csv = [p.strip() for p, _, _ in r]
+
+    missing_in_csv = sorted(set(counts) - set(planets_csv))
+    extra_in_csv   = sorted(set(planets_csv) - set(counts))
+    if missing_in_csv or extra_in_csv:
+        raise ValueError(
+            f"preflight mismatch: missing_in_csv={missing_in_csv} extra_in_csv={extra_in_csv}"
+        )
+
+
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS planet_counts (
   planet     TEXT PRIMARY KEY CHECK(length(trim(planet)) > 0),
@@ -196,6 +216,7 @@ def run(db_path="data/space_bridge.db",
         enriched_csv="data/counts_enriched.csv",
         top: int = 3,
         max_share_sum: float = 1.000001) -> dict[str, float | int | list[tuple[str, int]]]:
+    preflight_inputs(counts_json, enriched_csv)
     conn = init_db(db_path)
     try:
         n1 = upsert_counts(conn, counts_json)
@@ -207,7 +228,7 @@ def run(db_path="data/space_bridge.db",
         if bad:
             summary = {k: len(v) for k, v in bad.items()}
             examples = {k: v[:3] for k, v in bad.items()}
-            raise ValueError(f"QA failes: {summary}; examples: {examples}")
+            raise ValueError(f"QA failed: {summary}; examples: {examples}")
     finally:
         conn.close()
 

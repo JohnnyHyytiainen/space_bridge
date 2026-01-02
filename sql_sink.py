@@ -157,6 +157,37 @@ def validate(conn: sqlite3.Connection) -> dict[str, list[str]]:
         "empty_names": empty_names,
     }
 
+# C8 — Export/rapport (Top-N till CSV)
+def export_top_csv(conn: sqlite3.Connection, out_path: str = "data/report_top.csv", top: int = 3) -> int:
+    rows = list(conn.execute(
+        """
+        SELECT c.planet, c.count, e.share
+        FROM planet_counts c
+        JOIN counts_enriched e ON e.planet = c.planet
+        ORDER BY c.count DESC
+        LIMIT ?
+        """,
+        (int(top),),
+    ))
+    Path(out_path).parent.mkdir(parents=True, exist_ok=True)
+    with open(out_path, "w", encoding="utf-8", newline="") as f:
+        w = csv.writer(f)
+        w.writerow(["planet", "count", "share"])
+        w.writerows(rows)
+    return len(rows)
+
+
+def export_from_config(config_path: str = "config.json", out_path: str | None = None) -> dict:
+    cfg = load_config(config_path)
+    out = out_path or "data/report_top.csv"
+    conn = init_db(cfg["db"])
+    try:
+        n = export_top_csv(conn, out, top=int(cfg.get("top", 3)))
+    finally:
+        conn.close()
+    return {"out": out, "rows": n}
+
+
 # BLOCK 6: run() med mini QA-grind
 
 

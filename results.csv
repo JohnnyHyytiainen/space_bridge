@@ -31,3 +31,5 @@
     2025-11-05,C5,run.py,10,1,2.03,true,RookieAdvanced,Y,"Sanitycheck"
     2025-11-06,C5,sql_sink.py,15,1,2.26,true,RookieAdvanced,Y,"db=data/space_bridge.db counts_rows=4 enriched_rows=4 share_sum=1.0"
     2025-11-06,C6,config.json,40,2,0.00,true,RookieAdvanced,Y
+    2026-01-02,C7,sql_sink.py,45,1,0.00,true,RookieAdvanced,Y
+    2026-01-02,C7,sql_sink.py,45,2,0.00,true,RookieAdvanced,Y

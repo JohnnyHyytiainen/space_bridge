@@ -123,6 +123,40 @@ def quick_checks(conn: sqlite3.Connection, top: int = 3) -> dict[str, float | in
     share_sum = cur.fetchone()[0] or 0.0
     return {"top": topn, "share_sum": float(share_sum)}
 
+
+def validate(conn: sqlite3.Connection) -> dict[str, list[str]]:
+    cur = conn.cursor()
+    negative = [p for (p,) in cur.execute(
+        "SELECT planet FROM planet_counts WHERE count < 0"
+    )]
+
+    share_oob = [p for (p,) in cur.execute(
+        "SELECT planet FROM counts_enriched WHERE share < 0.0 OR share > 1.0"
+    )]
+
+    mismatch = [p for (p,) in cur.execute("""
+        SELECT e.planet
+        FROM counts_enriched e
+        LEFT JOIN planet_counts c ON c.planet = e.planet
+        WHERE c.planet IS NULL
+        UNION
+        SELECT c.planet
+        FROM planet_counts c
+        LEFT JOIN counts_enriched e ON e.planet = c.planet
+        WHERE e.planet IS NULL                                 
+    """)]
+    empty_names = [p for (p,) in cur.execute("""
+        SELECT planet FROM planet_counts WHERE trim(planet)=''
+        UNION
+        SELECT planet FROM counts_enriched WHERE trim(planet)=''                             
+    """)]
+    return {
+        "negative_counts": negative,
+        "share_out_of_range": share_oob,
+        "mismatch": mismatch,
+        "empty_names": empty_names,
+    }
+
 # BLOCK 6: run() med mini QA-grind
 
 
@@ -136,6 +170,13 @@ def run(db_path="data/space_bridge.db",
         n1 = upsert_counts(conn, counts_json)
         n2 = upsert_enriched(conn, enriched_csv)
         qc = quick_checks(conn, top=top)
+        # C7: Samla dataproblem och kasta ett tydligt fel
+        issues = validate(conn)
+        bad = {k: v for k, v in issues.items() if v}
+        if bad:
+            summary = {k: len(v) for k, v in bad.items()}
+            examples = {k: v[:3] for k, v in bad.items()}
+            raise ValueError(f"QA failes: {summary}; examples: {examples}")
     finally:
         conn.close()
 

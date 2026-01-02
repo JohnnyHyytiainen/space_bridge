@@ -1,7 +1,7 @@
 {
     "db": "data/space_bridge.db",
     "counts_json": "data/planet_counts.json",
-    "enriched_csv": "data/counts_enriched.csv",
+    "enriched_csv": "data/bad_enriched2.csv",
     "top": 3,
     "max_share_sum": 1.000001
 }

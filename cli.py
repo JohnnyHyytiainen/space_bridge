@@ -9,7 +9,7 @@ from counts_enrich import run as enrich_run
 from sql_sink import run_from_config, export_from_config
 # run(inp, outp) -> dict
 
-VERSION = "0.8.0 (C8)"
+VERSION = "0.8.1 (C8)"
 #
 
 # A-cli

@@ -184,7 +184,7 @@ def export_top_csv(conn: sqlite3.Connection, out_path: str = "data/report_top.cs
         SELECT c.planet, c.count, e.share
         FROM planet_counts c
         JOIN counts_enriched e ON e.planet = c.planet
-        ORDER BY c.count DESC
+        ORDER BY c.count DESC, c.planet ASC
         LIMIT ?
         """,
         (int(top),),

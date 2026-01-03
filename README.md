@@ -1,5 +1,8 @@
 # Space Bridge — mikro-ETL (JSONL -> CSV/SQLite) med QA och rapport
-![Demo gif](space_bridge.gif)
+
+## Demo on how to run.
+![Demo: sql-load + sql-report](space_bridge.gif)
+
 **Syfte**  
 Träna och demonstrera Data Engineering vanor: idempotent ETL, tydliga kvalitetsgrindar (QA), mätbarhet och config-styrning. Projektet är byggt i cykler (C1–C8) och designat för att vara lätt att granska, köra om och visa upp (demo).
 
